@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catálogo de Productos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      body { font-family: 'Inter', sans-serif; }
+      #filters select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: 2.5rem;
+      }
+    </style>
+</head>
+<body class="bg-[#000000] text-[#D9D9D9]">
+    <header class="bg-[#1C1C1C]/80 backdrop-blur-lg shadow-md sticky top-0 z-10 p-4 border-b border-gray-800">
+        <div class="container mx-auto flex flex-col gap-4">
+            <div class="flex items-center justify-between gap-4">
+                <div id="header-title" class="flex items-center gap-3">
+                    <h1 class="text-2xl font-bold text-[#FFD300]">Catálogo</h1>
+                </div>
+            </div>
+            <div id="filters" class="flex flex-wrap items-center gap-2 sm:gap-4">
+                <input type="text" id="search-input" placeholder="Buscar productos..." class="w-full sm:w-auto flex-grow sm:flex-grow-0 md:w-48 px-4 py-2 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFD300] bg-[#101010] text-[#D9D9D9] placeholder-gray-500">
+                <select id="category-select" class="w-full sm:w-auto px-4 py-2 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFD300] bg-[#101010] text-[#D9D9D9]"></select>
+                <select id="brand-select" class="w-full sm:w-auto px-4 py-2 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFD300] bg-[#101010] text-[#D9D9D9]"></select>
+                <select id="measure-select" class="w-full sm:w-auto px-4 py-2 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFD300] bg-[#101010] text-[#D9D9D9]"></select>
+                <button id="clear-filters-btn" class="p-2 text-gray-400 rounded-full hover:bg-gray-800 hover:text-[#FFD300] transition-colors" title="Borrar filtros" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+    <main class="p-4 sm:p-6 lg:p-8">
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            <!-- Los productos se cargarán aquí -->
+        </div>
+    </main>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const productGrid = document.getElementById('product-grid');
+        const headerTitle = document.getElementById('header-title');
+        const searchInput = document.getElementById('search-input');
+        const categorySelect = document.getElementById('category-select');
+        const brandSelect = document.getElementById('brand-select');
+        const measureSelect = document.getElementById('measure-select');
+        const clearFiltersBtn = document.getElementById('clear-filters-btn');
+        
+        let allProducts = [];
+
+        const formatCurrency = (value) => {
+          if (!value || String(value).trim() === '') return 'Consultar';
+          if (/[a-zA-Z]/.test(String(value))) return value;
+          const standardizedValue = String(value).replace(/\./g, '').replace(',', '.');
+          const number = parseFloat(standardizedValue);
+          if (isNaN(number)) return value;
+          return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(number);
+        };
+
+        const createProductCardHTML = (product) => {
+          const details = [product.medida, product.origen].filter(Boolean).join(' - ');
+          
+          return `
+            <div class="bg-gray-800 rounded-lg shadow-sm overflow-hidden flex flex-col border border-gray-900">
+                <div class="relative aspect-square w-full bg-white">
+                    <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-contain" />
+                </div>
+                <div class="flex flex-col flex-grow text-[#D9D9D9]">
+                    <div class="p-4 flex flex-col flex-grow">
+                        ${product.brand ? `<p class="text-xs font-semibold uppercase tracking-wider text-gray-400">${product.brand}</p>` : ''}
+                        <p class="text-sm font-medium text-yellow-400">${product.category}</p>
+                        <h3 class="text-lg font-bold text-white mt-1 leading-tight" title="${product.name}">${product.name}</h3>
+                        ${details ? `<p class="text-xs text-gray-500 mt-1" title="${details}">${details}</p>` : ''}
+                        
+                        <div class="mt-4">
+                            ${product.cashPrice ? `
+                                <div class="flex flex-col items-start">
+                                    <p class="text-md text-gray-400 line-through">${formatCurrency(product.listPrice)}</p>
+                                    <p class="text-2xl font-extrabold text-[#FFD300]">${formatCurrency(product.cashPrice)}</p>
+                                    <p class="text-xs text-gray-500">Precio Contado</p>
+                                </div>
+                            ` : `
+                                <div class="text-left">
+                                    <p class="text-2xl font-extrabold text-[#FFD300]">${formatCurrency(product.listPrice)}</p>
+                                    <p class="text-xs text-gray-500">Precio de Lista</p>
+                                </div>
+                            `}
+                        </div>
+                        
+                        <div class="mt-4 flex-grow min-h-[80px] flex items-center">
+                            ${product.description ? `<p class="text-sm text-gray-300 text-justify">${product.description}</p>` : ''}
+                        </div>
+                    </div>
+                     <div class="p-4 bg-black text-white">
+                        <div class="flex flex-col justify-center items-center text-center">
+                            <p class="text-xs font-semibold">Lagartobike - Av. Juan de Garay 612 - San Telmo - CABA</p>
+                            <div class="flex items-center justify-center flex-wrap gap-x-4 gap-y-1 mt-2">
+                                <div class="flex items-center gap-1.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                                    <span class="text-xs">lagarto.bike</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"></path></svg>
+                                    <span class="text-xs">Lagartobike</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" /></svg>
+                                    <span class="text-xs">Sebastian 11-3431-7611</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          `;
+        };
+        
+        const renderProducts = (productsToRender) => {
+            productGrid.innerHTML = '';
+            if (productsToRender.length === 0) {
+                productGrid.innerHTML = `<div class="text-center col-span-full py-16"><p class="text-xl text-gray-400">No se encontraron productos que coincidan con los filtros.</p></div>`;
+                return;
+            }
+            const fragment = document.createDocumentFragment();
+            productsToRender.forEach(product => {
+                const cardWrapper = document.createElement('div');
+                cardWrapper.innerHTML = createProductCardHTML(product).trim();
+                fragment.appendChild(cardWrapper.firstChild);
+            });
+            productGrid.appendChild(fragment);
+        };
+
+        const applyFilters = () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedCategory = categorySelect.value;
+            const selectedBrand = brandSelect.value;
+            const selectedMeasure = measureSelect.value;
+
+            const filtered = allProducts.filter(p => {
+                const matchesSearch = p.name.toLowerCase().includes(searchTerm);
+                const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
+                const matchesBrand = selectedBrand === 'all' || p.brand === selectedBrand;
+                const matchesMeasure = selectedMeasure === 'all' || p.medida === selectedMeasure;
+                return matchesSearch && matchesCategory && matchesBrand && matchesMeasure;
+            });
+
+            const sorted = [...filtered].sort((a, b) => {
+                const categoryComparison = a.category.localeCompare(b.category, 'es', { sensitivity: 'base' });
+                if (categoryComparison !== 0) return categoryComparison;
+                const brandA = a.brand || '';
+                const brandB = b.brand || '';
+                const brandComparison = brandA.localeCompare(brandB, 'es', { sensitivity: 'base' });
+                if (brandComparison !== 0) return brandComparison;
+                const measureA = a.medida || '';
+                const measureB = b.medida || '';
+                return measureA.localeCompare(measureB, 'es', { sensitivity: 'base' });
+            });
+
+            renderProducts(sorted);
+
+            const isFilterActive = searchTerm || selectedCategory !== 'all' || selectedBrand !== 'all' || selectedMeasure !== 'all';
+            clearFiltersBtn.style.display = isFilterActive ? 'block' : 'none';
+        };
+
+        const populateSelect = (selectElement, items, defaultOptionText) => {
+            selectElement.innerHTML = `<option value="all">${defaultOptionText}</option>`;
+            const uniqueItems = [...new Set(items.filter(Boolean))];
+            uniqueItems.sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+            uniqueItems.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item;
+                option.textContent = item;
+                selectElement.appendChild(option);
+            });
+            selectElement.style.display = uniqueItems.length > 0 ? 'block' : 'none';
+        };
+        
+        const renderCatalog = (data) => {
+          allProducts = data.products || [];
+
+          if (data.logoUrl) {
+              const logoImg = document.createElement('img');
+              logoImg.src = data.logoUrl;
+              logoImg.alt = 'Logo';
+              logoImg.className = 'w-10 h-10 object-cover rounded-full';
+              headerTitle.insertAdjacentElement('afterbegin', logoImg);
+          }
+          
+          populateSelect(categorySelect, allProducts.map(p => p.category), 'Todas las familias');
+          populateSelect(brandSelect, allProducts.map(p => p.brand), 'Todas las marcas');
+          populateSelect(measureSelect, allProducts.map(p => p.medida), 'Todas las medidas');
+        
+          applyFilters();
+
+          searchInput.addEventListener('input', applyFilters);
+          categorySelect.addEventListener('change', applyFilters);
+          brandSelect.addEventListener('change', applyFilters);
+          measureSelect.addEventListener('change', applyFilters);
+          
+          clearFiltersBtn.addEventListener('click', () => {
+              searchInput.value = '';
+              categorySelect.value = 'all';
+              brandSelect.value = 'all';
+              measureSelect.value = 'all';
+              applyFilters();
+          });
+        };
+
+        
+        fetch('data.json')
+            .then(response => response.json())
+            .then(data => renderCatalog(data))
+            .catch(error => {
+                console.error('Error al cargar los datos de los productos:', error);
+                document.getElementById('product-grid').innerHTML = '<p class="text-center col-span-full text-red-400">No se pudo cargar el catálogo.</p>';
+            });
+      
+      });
+    </script>
+</body>
+</html>
