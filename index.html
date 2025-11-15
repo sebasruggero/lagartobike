@@ -13,6 +13,12 @@
       body { 
         font-family: 'Inter', sans-serif;
         background-color: #000;
+        overflow-x: hidden;
+      }
+      .navbar-logo {
+        height: 50px;
+        width: auto;
+        object-fit: contain;
       }
       .card-img-top-container {
         aspect-ratio: 1 / 1;
@@ -40,7 +46,7 @@
         font-size: 30px;
         box-shadow: 2px 2px 6px rgba(0,0,0,0.25);
         z-index: 1000;
-        transition: transform 0.2s ease;
+        transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -51,8 +57,9 @@
       #whatsapp-fab svg {
         width: 32px;
         height: 32px;
+        transition: width 0.2s ease, height 0.2s ease;
       }
-      .form-control, .form-select {
+      .form-control, .form-select, .dropdown-menu {
         background-color: #101010;
         border-color: #444;
         color: #D9D9D9;
@@ -63,26 +70,90 @@
         color: #D9D9D9;
         box-shadow: 0 0 0 0.25rem rgba(255, 211, 0, 0.25);
       }
+       .dropdown-item {
+         color: #D9D9D9;
+       }
+      .dropdown-item:hover, .dropdown-item:focus {
+        background-color: #FFD300;
+        color: #101010;
+      }
+      .navbar-brand .fs-4 {
+          font-size: 1.25rem !important;
+      }
+      
+      /* Responsive styles */
+      @media (max-width: 991.98px) {
+        .navbar-nav {
+          padding-top: 1rem;
+        }
+      }
+      
+      @media (max-width: 767.98px) {
+        .card-title {
+          font-size: 1.1rem;
+        }
+        .card-body .h3 {
+          font-size: 1.5rem;
+        }
+        .card-footer .d-flex {
+            font-size: 0.7rem;
+        }
+        #whatsapp-fab {
+            width: 50px;
+            height: 50px;
+            bottom: 20px;
+            right: 20px;
+        }
+        #whatsapp-fab svg {
+            width: 28px;
+            height: 28px;
+        }
+        .navbar-brand .fs-4 {
+          font-size: 1.1rem !important;
+        }
+      }
+
+      @media (max-width: 575.98px) {
+        .navbar-logo {
+          height: 40px;
+        }
+        .card-footer .d-flex {
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem !important;
+        }
+      }
     </style>
 </head>
 <body class="bg-black">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top border-bottom border-secondary py-3">
         <div class="container-fluid">
-            <div id="header-brand-container" class="navbar-brand d-flex align-items-center gap-2" href="#">
+            <a class="navbar-brand d-flex align-items-center gap-3" href="#" id="navbar-brand-container">
                 <span class="fs-4 fw-bold" style="color: #FFD300;">Catálogo</span>
-            </div>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarFilters" aria-controls="navbarFilters" aria-expanded="false" aria-label="Toggle navigation">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarFilters">
-                 <div id="filters" class="d-flex flex-wrap align-items-center gap-2 w-100 justify-content-center pt-3 pt-lg-0">
-                    <input type="text" id="search-input" placeholder="Buscar productos..." class="form-control form-control-sm flex-grow-1 flex-sm-grow-0" style="min-width: 150px; max-width: 250px;">
-                    <select id="category-select" class="form-select form-select-sm flex-grow-1 flex-sm-grow-0" style="min-width: 150px; max-width: 250px;"></select>
-                    <select id="brand-select" class="form-select form-select-sm flex-grow-1 flex-sm-grow-0" style="min-width: 150px; max-width: 250px;"></select>
-                    <select id="measure-select" class="form-select form-select-sm flex-grow-1 flex-sm-grow-0" style="min-width: 150px; max-width: 250px;"></select>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="category-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-value="all">Familia</a>
+                        <ul class="dropdown-menu" aria-labelledby="category-dropdown" id="category-dropdown-menu"></ul>
+                    </li>
+                    <li class="nav-item dropdown" id="brand-dropdown-container" style="display: none;">
+                        <a class="nav-link dropdown-toggle" href="#" id="brand-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-value="all">Marcas</a>
+                        <ul class="dropdown-menu" aria-labelledby="brand-dropdown" id="brand-dropdown-menu"></ul>
+                    </li>
+                    <li class="nav-item dropdown" id="measure-dropdown-container" style="display: none;">
+                        <a class="nav-link dropdown-toggle" href="#" id="measure-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-value="all">Medida</a>
+                        <ul class="dropdown-menu" aria-labelledby="measure-dropdown" id="measure-dropdown-menu"></ul>
+                    </li>
+                </ul>
+                <div class="d-flex gap-2 align-items-center">
+                    <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar" id="search-input">
                     <button id="clear-filters-btn" class="btn btn-sm btn-outline-secondary" title="Borrar filtros" style="display: none;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                          <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
                         </svg>
                     </button>
                 </div>
@@ -104,11 +175,20 @@
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const productGrid = document.getElementById('product-grid');
-        const headerBrandContainer = document.getElementById('header-brand-container');
+        const navbarBrandContainer = document.getElementById('navbar-brand-container');
         const searchInput = document.getElementById('search-input');
-        const categorySelect = document.getElementById('category-select');
-        const brandSelect = document.getElementById('brand-select');
-        const measureSelect = document.getElementById('measure-select');
+        
+        const categoryDropdown = document.getElementById('category-dropdown');
+        const categoryDropdownMenu = document.getElementById('category-dropdown-menu');
+
+        const brandDropdownContainer = document.getElementById('brand-dropdown-container');
+        const brandDropdown = document.getElementById('brand-dropdown');
+        const brandDropdownMenu = document.getElementById('brand-dropdown-menu');
+        
+        const measureDropdownContainer = document.getElementById('measure-dropdown-container');
+        const measureDropdown = document.getElementById('measure-dropdown');
+        const measureDropdownMenu = document.getElementById('measure-dropdown-menu');
+
         const clearFiltersBtn = document.getElementById('clear-filters-btn');
         
         let allProducts = [];
@@ -160,16 +240,16 @@
                         <p class="mb-1 fw-semibold">Lagartobike - Av. Juan de Garay 612 - San Telmo - CABA</p>
                         <div class="d-flex align-items-center justify-content-center flex-wrap gap-3 mt-2">
                             <div class="d-flex align-items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8s.01 2.444.048 3.297c.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 8 0zm0 1.442c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.598.92c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.598-.92c-.11-.28-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.231s.008-2.389.046-3.232c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.843-.038 1.096-.047 3.232-.047zM8 4.865a3.135 3.135 0 1 0 0 6.27 3.135 3.135 0 0 0 0-6.27zM8 10a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm4.885-6.402a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92z"/></svg>
-                                <span>lagarto.bike</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.703 0 5.556 0 5.829 0 8s.01 2.444.048 3.297c.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.556 23.99 5.829 24 8 24s2.444-.01 3.297-.048c.852-.04 1.433-.174 1.942-.372.526-.205.972-.478 1.417-.923.445-.444.718-.891.923-1.417.198-.51.333-1.09.372-1.942C23.99 18.444 24 18.171 24 16s-.01-2.444-.048-3.297c-.04-.852-.174-1.433-.372-1.942a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 18.24.42c-.51-.198-1.09-.333-1.942-.372C15.444.01 15.171 0 12 0H8zm0 2.88c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.282.24.705.275 1.486.039.843.047 1.096.047 3.232s-.008 2.389-.047 3.232c-.035.78-.166 1.204-.275 1.486a2.5 2.5 0 0 1-.598.92c-.28.28-.546.453-.92.598-.282.11-.705.24-1.486.275-.843.039-1.096.047-3.232.047s-2.389-.008-3.232-.047c-.78-.035-1.204-.166-1.486-.275a2.5 2.5 0 0 1-.92-.598c-.28-.28-.453-.546-.598-.92-.11-.282-.24-.705-.275-1.486-.039-.843-.047-1.096-.047-3.232s.008-2.389.047-3.232c.035-.78.166-1.204.275-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705.24 1.486-.275.843-.039 1.096-.047 3.232-.047zM8 12c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4-4-1.79-4-4zm6.406-4.883a1.144 1.144 0 1 0 0-2.288 1.144 1.144 0 0 0 0 2.288z"/></svg>
+                                <span class="small">lagarto.bike</span>
                             </div>
                             <div class="d-flex align-items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16"><path d="M16 8.049c0-4.446-3.582-8.05-8-8.05S0 3.603 0 8.049c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05h2.03v-2.117c0-2.018 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/></svg>
-                                <span>Lagartobike</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16"><path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0 0 3.603 0 8.049c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/></svg>
+                                <span class="small">Lagartobike</span>
                             </div>
                             <div class="d-flex align-items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.246 1.405l-1.11 2.061c.11.22.25.433.42.62a13.3 13.3 0 0 0 6.564 6.564c.187.17.399.31.62.42l2.061-1.11a1.44 1.44 0 0 1 1.405.246l2.311 1.734c.45.337.644.945.42 1.488l-.94 1.879a1.75 1.75 0 0 1-2.909.833A17.1 17.1 0 0 1 .51 1.885.75.75 0 0 1 .672.887l.213-.128a1.75 1.75 0 0 1 1.002-.248z"/></svg>
-                                <span>Sebastian 11-3431-7611</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone" viewBox="0 0 16 16"><path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.6 17.6 0 0 0 4.168 6.608 17.6 17.6 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.68.68 0 0 0-.58-.122l-2.19.547a1.75 1.75 0 0 1-1.657-.459L5.482 8.062a1.75 1.75 0 0 1-.46-1.657l.548-2.19a.68.68 0 0 0-.122-.58zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.612l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.363-1.03-.038-2.137.703-2.877z"/></svg>
+                                <span class="small">Sebastian 11-3431-7611</span>
                             </div>
                         </div>
                     </div>
@@ -177,97 +257,142 @@
             </div>
           `;
         };
-        
-        const renderProducts = (productsToRender) => {
-            if (productsToRender.length === 0) {
-                productGrid.innerHTML = `<div class="text-center col-12 py-5"><p class="fs-4 text-muted">No se encontraron productos que coincidan con los filtros.</p></div>`;
-                return;
-            }
-            let productsHTML = '';
-            productsToRender.forEach(product => {
-                productsHTML += createProductCardHTML(product);
-            });
-            productGrid.innerHTML = productsHTML;
+
+        const updateDropdown = (container, dropdown, dropdownMenu, items, label) => {
+          if (items.length <= 1) {
+            container.style.display = 'none';
+            return;
+          }
+          container.style.display = 'block';
+          dropdownMenu.innerHTML = '';
+          const allItem = document.createElement('li');
+          allItem.innerHTML = `<a class="dropdown-item" href="#" data-value="all">Todos los ${label}</a>`;
+          dropdownMenu.appendChild(allItem);
+
+          items.forEach(item => {
+            if (item === 'all') return;
+            const li = document.createElement('li');
+            li.innerHTML = `<a class="dropdown-item" href="#" data-value="${item}">${item}</a>`;
+            dropdownMenu.appendChild(li);
+          });
         };
 
-        const applyFilters = () => {
-            const searchTerm = searchInput.value.toLowerCase();
-            const selectedCategory = categorySelect.value;
-            const selectedBrand = brandSelect.value;
-            const selectedMeasure = measureSelect.value;
-
-            const filtered = allProducts.filter(p => {
-                const matchesSearch = p.name.toLowerCase().includes(searchTerm);
-                const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
-                const matchesBrand = selectedBrand === 'all' || p.brand === selectedBrand;
-                const matchesMeasure = selectedMeasure === 'all' || p.medida === selectedMeasure;
-                return matchesSearch && matchesCategory && matchesBrand && matchesMeasure;
-            });
-
-            const sorted = [...filtered].sort((a, b) => {
-                const categoryComparison = a.category.localeCompare(b.category, 'es', { sensitivity: 'base' });
-                if (categoryComparison !== 0) return categoryComparison;
-                const brandA = a.brand || '';
-                const brandB = b.brand || '';
-                const brandComparison = brandA.localeCompare(brandB, 'es', { sensitivity: 'base' });
-                if (brandComparison !== 0) return brandComparison;
-                const measureA = a.medida || '';
-                const measureB = b.medida || '';
-                return measureA.localeCompare(measureB, 'es', { sensitivity: 'base' });
-            });
-
-            renderProducts(sorted);
-
-            const isFilterActive = searchTerm || selectedCategory !== 'all' || selectedBrand !== 'all' || selectedMeasure !== 'all';
-            clearFiltersBtn.style.display = isFilterActive ? 'inline-block' : 'none';
-        };
-
-        const populateSelect = (selectElement, items, defaultOptionText) => {
-            selectElement.innerHTML = `<option value="all">${defaultOptionText}</option>`;
-            const uniqueItems = [...new Set(items.filter(Boolean))];
-            uniqueItems.sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
-            uniqueItems.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item;
-                option.textContent = item;
-                selectElement.appendChild(option);
-            });
-            selectElement.style.display = uniqueItems.length > 0 ? 'block' : 'none';
-        };
-        
         const renderCatalog = (data) => {
-          allProducts = data.products || [];
-
-          if (data.logoUrl) {
+            // Logo
+            if (data.logoUrl && navbarBrandContainer) {
               const logoImg = document.createElement('img');
               logoImg.src = data.logoUrl;
               logoImg.alt = 'Logo';
-              logoImg.className = 'rounded-circle';
-              logoImg.style.width = '40px';
-              logoImg.style.height = '40px';
-              logoImg.style.objectFit = 'cover';
-              headerBrandContainer.prepend(logoImg);
+              logoImg.className = 'navbar-logo';
+              navbarBrandContainer.prepend(logoImg);
+            }
+            
+            // Products
+            allProducts = data.products;
+            applyFilters();
+        };
+
+        const applyFilters = () => {
+          const searchTerm = searchInput.value.toLowerCase();
+          const selectedCategory = categoryDropdown.getAttribute('data-value');
+          const selectedBrand = brandDropdown.getAttribute('data-value');
+          const selectedMeasure = measureDropdown.getAttribute('data-value');
+
+          const isFilterActive = searchTerm || selectedCategory !== 'all' || selectedBrand !== 'all' || selectedMeasure !== 'all';
+          clearFiltersBtn.style.display = isFilterActive ? 'block' : 'none';
+
+          // --- Cascading Filter Logic ---
+          
+          const productsFilteredBySearchAndCategory = allProducts.filter(product => {
+              const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+              const matchesSearch = product.name.toLowerCase().includes(searchTerm);
+              return matchesCategory && matchesSearch;
+          });
+          
+          const availableBrands = ['all', ...Array.from(new Set(productsFilteredBySearchAndCategory.map(p => p.brand).filter(Boolean)))];
+          updateDropdown(brandDropdownContainer, brandDropdown, brandDropdownMenu, availableBrands, 'Marcas');
+          
+          const currentSelectedBrand = brandDropdown.getAttribute('data-value');
+          if (!availableBrands.includes(currentSelectedBrand)) {
+              brandDropdown.setAttribute('data-value', 'all');
+              brandDropdown.textContent = 'Marcas';
+          }
+
+          const productsFilteredByBrand = productsFilteredBySearchAndCategory.filter(product => {
+              const currentBrand = brandDropdown.getAttribute('data-value');
+              const matchesBrand = currentBrand === 'all' || product.brand === currentBrand;
+              return matchesBrand;
+          });
+
+          const availableMeasures = ['all', ...Array.from(new Set(productsFilteredByBrand.map(p => p.medida).filter(Boolean)))];
+          updateDropdown(measureDropdownContainer, measureDropdown, measureDropdownMenu, availableMeasures, 'Medidas');
+          
+          const currentSelectedMeasure = measureDropdown.getAttribute('data-value');
+          if (!availableMeasures.includes(currentSelectedMeasure)) {
+            measureDropdown.setAttribute('data-value', 'all');
+            measureDropdown.textContent = 'Medida';
           }
           
-          populateSelect(categorySelect, allProducts.map(p => p.category), 'Todas las familias');
-          populateSelect(brandSelect, allProducts.map(p => p.brand), 'Todas las marcas');
-          populateSelect(measureSelect, allProducts.map(p => p.medida), 'Todas las medidas');
-        
-          applyFilters();
-
-          searchInput.addEventListener('input', applyFilters);
-          categorySelect.addEventListener('change', applyFilters);
-          brandSelect.addEventListener('change', applyFilters);
-          measureSelect.addEventListener('change', applyFilters);
-          
-          clearFiltersBtn.addEventListener('click', () => {
-              searchInput.value = '';
-              categorySelect.value = 'all';
-              brandSelect.value = 'all';
-              measureSelect.value = 'all';
-              applyFilters();
+          const finalProducts = productsFilteredByBrand.filter(product => {
+            const currentMeasure = measureDropdown.getAttribute('data-value');
+            const matchesMeasure = currentMeasure === 'all' || product.medida === currentMeasure;
+            return matchesMeasure;
           });
+
+          // --- End of Cascading Filter Logic ---
+
+          // Populate main filters if they are empty
+          if(categoryDropdownMenu.children.length === 0) {
+            const allCategories = ['all', ...Array.from(new Set(allProducts.map(p => p.category).filter(Boolean)))];
+            updateDropdown(document.querySelector('.nav-item.dropdown'), categoryDropdown, categoryDropdownMenu, allCategories, 'Familias');
+          }
+
+          finalProducts.sort((a, b) => {
+            const categoryComparison = a.category.localeCompare(b.category, 'es', { sensitivity: 'base' });
+            if (categoryComparison !== 0) return categoryComparison;
+            const brandA = a.brand || '';
+            const brandB = b.brand || '';
+            const brandComparison = brandA.localeCompare(brandB, 'es', { sensitivity: 'base' });
+            if (brandComparison !== 0) return brandComparison;
+            const measureA = a.medida || '';
+            const measureB = b.medida || '';
+            return measureA.localeCompare(measureB, 'es', { sensitivity: 'base' });
+          });
+          
+          productGrid.innerHTML = finalProducts.length 
+            ? finalProducts.map(createProductCardHTML).join('')
+            : '<p class="text-center col-12 text-muted">No se encontraron productos con los filtros aplicados.</p>';
         };
+        
+        searchInput.addEventListener('input', applyFilters);
+        clearFiltersBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            categoryDropdown.setAttribute('data-value', 'all');
+            categoryDropdown.textContent = 'Familia';
+            brandDropdown.setAttribute('data-value', 'all');
+            brandDropdown.textContent = 'Marcas';
+            measureDropdown.setAttribute('data-value', 'all');
+            measureDropdown.textContent = 'Medida';
+            applyFilters();
+        });
+
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.addEventListener('click', (e) => {
+                const target = e.target;
+                if (target.matches('.dropdown-item')) {
+                    e.preventDefault();
+                    const value = target.getAttribute('data-value');
+                    const dropdownToggle = target.closest('.dropdown').querySelector('.dropdown-toggle');
+                    dropdownToggle.setAttribute('data-value', value);
+                    if (value === 'all') {
+                        dropdownToggle.textContent = dropdownToggle.id.includes('category') ? 'Familia' : (dropdownToggle.id.includes('brand') ? 'Marcas' : 'Medida');
+                    } else {
+                        dropdownToggle.textContent = target.textContent;
+                    }
+                    applyFilters();
+                }
+            });
+        });
 
         
         fetch('data.json')
