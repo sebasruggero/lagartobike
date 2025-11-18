@@ -4,277 +4,560 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Catálogo de Productos</title>
+    <title>Catálogo Online</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
+      :root {
+        --accent-color: #FFD300;
+        --dark-bg: #121212;
+        --card-bg: #1E1E1E;
+        --text-primary: #E0E0E0;
+        --text-secondary: #A0A0A0;
+      }
       body { 
         font-family: 'Inter', sans-serif;
-        background-color: #000;
-        overflow-x: hidden;
+        background-color: var(--dark-bg);
+        color: var(--text-primary);
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
-        min-height: 100vh;
       }
-      main {
-        flex: 1;
+      
+      /* Navbar Styles */
+      .navbar {
+        background-color: rgba(18, 18, 18, 0.95) !important;
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid #333;
       }
       .navbar-logo {
-        height: 50px;
+        height: 45px;
         width: auto;
         object-fit: contain;
+        border-radius: 50%;
       }
-      .card-img-top-container {
-        aspect-ratio: 1 / 1;
-        width: 100%;
+      .nav-link {
+        font-weight: 500;
+        color: var(--text-primary) !important;
+        transition: color 0.2s;
+      }
+      .nav-link:hover {
+        color: var(--accent-color) !important;
+      }
+      .navbar-brand {
+        color: var(--accent-color) !important;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+      }
+
+      /* Hero Section */
+      .hero-section {
+        background: linear-gradient(45deg, #000000, #1C1C1C);
+        padding: 4rem 1rem;
+        text-align: center;
+        border-bottom: 1px solid #333;
+        margin-bottom: 2rem;
+      }
+      .hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(to right, #FFD300, #FFEA80);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+      }
+      
+      /* Product Card Styles */
+      .product-card {
+        background-color: var(--card-bg);
+        border: 1px solid #333;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        flex-direction: column;
+      }
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        border-color: var(--accent-color);
+      }
+      .card-img-wrapper {
+        position: relative;
+        width: 100%;
+        padding-top: 100%; /* 1:1 Aspect Ratio */
+        background-color: #fff;
         overflow: hidden;
       }
       .card-img-top {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         object-fit: contain;
+        padding: 10px;
+        transition: transform 0.5s ease;
       }
+      .product-card:hover .card-img-top {
+        transform: scale(1.05);
+      }
+      .card-body {
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+      }
+      .card-brand {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-secondary);
+        font-weight: 600;
+      }
+      .card-category {
+        font-size: 0.8rem;
+        color: var(--accent-color);
+        margin-bottom: 0.25rem;
+      }
+      .card-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+      }
+      .card-details {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+      .price-container {
+        margin-top: auto;
+        padding-top: 1rem;
+      }
+      .price-main {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--accent-color);
+      }
+      .price-muted {
+        text-decoration: line-through;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      /* Cart & FAB */
+      .btn-accent {
+          background-color: var(--accent-color);
+          color: #000;
+          font-weight: 700;
+          border: none;
+      }
+      .btn-accent:hover {
+          background-color: #FFE866;
+          color: #000;
+      }
+      
+      .qty-selector {
+          min-height: 38px;
+      }
+
       #whatsapp-fab {
         position: fixed;
         width: 60px;
         height: 60px;
         bottom: 25px;
         right: 25px;
-        background-color: #000;
-        border-radius: 12px;
-        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+        background-color: #25D366;
+        border-radius: 50%;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         z-index: 1000;
-        transition: transform 0.2s ease;
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
       }
       #whatsapp-fab:hover {
-        transform: scale(1.05);
+        transform: scale(1.1);
+        border-color: #fff;
       }
       #whatsapp-fab img {
-        width: 75%;
-        height: 75%;
-        object-fit: contain;
-      }
-      .form-control, .form-select, .dropdown-menu {
-        background-color: #101010;
-        border-color: #444;
-        color: #D9D9D9;
-      }
-      .form-control:focus, .form-select:focus {
-        background-color: #101010;
-        border-color: #FFD300;
-        color: #D9D9D9;
-        box-shadow: 0 0 0 0.25rem rgba(255, 211, 0, 0.25);
-      }
-       .dropdown-item {
-         color: #D9D9D9;
-       }
-      .dropdown-item:hover, .dropdown-item:focus {
-        background-color: #FFD300;
-        color: #101010;
-      }
-      .navbar-brand .fs-4 {
-          font-size: 1.25rem !important;
-      }
-      
-      /* Responsive styles */
-      @media (max-width: 991.98px) {
-        .navbar-nav {
-          padding-top: 1rem;
-        }
-        .navbar .d-flex {
-            width: 100%;
-            margin-top: 0.5rem;
-        }
-      }
-      
-      @media (max-width: 767.98px) {
-        .card-title {
-          font-size: 1.1rem;
-        }
-        .card-body .h3 {
-          font-size: 1.5rem;
-        }
-        #whatsapp-fab {
-            width: 50px;
-            height: 50px;
-            bottom: 20px;
-            right: 20px;
-        }
-        .navbar-brand .fs-4 {
-          font-size: 1.1rem !important;
-        }
+        width: 35px;
+        height: 35px;
       }
 
-      @media (max-width: 575.98px) {
-        .navbar-logo {
-          height: 40px;
-        }
+      /* Form Elements */
+      .form-control, .form-select {
+        background-color: #2A2A2A;
+        border: 1px solid #444;
+        color: #fff;
+        border-radius: 8px;
+      }
+      .form-control:focus, .form-select:focus {
+        background-color: #333;
+        border-color: var(--accent-color);
+        color: #fff;
+        box-shadow: none;
+      }
+      
+      /* Footer */
+      footer {
+        margin-top: auto;
+        background-color: #0A0A0A;
+        border-top: 1px solid #222;
+      }
+
+      @media (max-width: 768px) {
+        .hero-title { font-size: 2rem; }
+        .product-card:hover { transform: none; }
       }
     </style>
 </head>
-<body class="bg-black">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top border-bottom border-secondary py-3">
-        <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center gap-3" href="#" id="navbar-brand-container">
-                <span class="fs-4 fw-bold" style="color: #FFD300;">Catálogo</span>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#" id="navbar-brand-container">
+                <!-- Logo injected via JS -->
+                <span>CATÁLOGO</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+             
+            <div class="d-flex gap-3 align-items-center order-lg-3">
+                 <!-- Cart Trigger -->
+                <button class="btn btn-outline-light position-relative border-0" type="button" data-bs-toggle="modal" data-bs-target="#cartModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cart3" viewBox="0 0 16 16">
+                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.835 4.285 8.853-.462L11.85 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                    </svg>
+                    <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;">
+                        0
+                    </span>
+                </button>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center gap-2">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="category-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-value="all">Familia</a>
-                        <ul class="dropdown-menu" aria-labelledby="category-dropdown" id="category-dropdown-menu"></ul>
+                        <a class="nav-link dropdown-toggle" href="#" id="category-dropdown" role="button" data-bs-toggle="dropdown">Categorías</a>
+                        <ul class="dropdown-menu dropdown-menu-dark" id="category-dropdown-menu"></ul>
                     </li>
                     <li class="nav-item dropdown" id="brand-dropdown-container" style="display: none;">
-                        <a class="nav-link dropdown-toggle" href="#" id="brand-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-value="all">Marcas</a>
-                        <ul class="dropdown-menu" aria-labelledby="brand-dropdown" id="brand-dropdown-menu"></ul>
+                        <a class="nav-link dropdown-toggle" href="#" id="brand-dropdown" role="button" data-bs-toggle="dropdown">Marcas</a>
+                        <ul class="dropdown-menu dropdown-menu-dark" id="brand-dropdown-menu"></ul>
                     </li>
                     <li class="nav-item dropdown" id="measure-dropdown-container" style="display: none;">
-                        <a class="nav-link dropdown-toggle" href="#" id="measure-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-value="all">Medida</a>
-                        <ul class="dropdown-menu" aria-labelledby="measure-dropdown" id="measure-dropdown-menu"></ul>
+                        <a class="nav-link dropdown-toggle" href="#" id="measure-dropdown" role="button" data-bs-toggle="dropdown">Medidas</a>
+                        <ul class="dropdown-menu dropdown-menu-dark" id="measure-dropdown-menu"></ul>
+                    </li>
+                    <li class="nav-item">
+                       <input class="form-control form-control-sm" type="search" placeholder="Buscar producto..." id="search-input" style="min-width: 200px;">
                     </li>
                 </ul>
-                <div class="d-flex gap-2 align-items-center">
-                    <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar" id="search-input">
-                    <button id="clear-filters-btn" class="btn btn-sm btn-outline-secondary" title="Borrar filtros" style="display: none;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
-                        </svg>
-                    </button>
-                    <div class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white-50" href="#" id="sort-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-value="default">Ordenar por</a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sort-dropdown" id="sort-dropdown-menu">
-                            <li><a class="dropdown-item" href="#" data-value="default">Defecto</a></li>
-                            <li><a class="dropdown-item" href="#" data-value="price-asc">Precio (Menor)</a></li>
-                            <li><a class="dropdown-item" href="#" data-value="price-desc">Precio (Mayor)</a></li>
-                        </ul>
-                    </div>
+                <div class="d-flex align-items-center gap-2 ms-lg-3 mt-2 mt-lg-0 justify-content-center">
+                    <button id="clear-filters-btn" class="btn btn-sm btn-outline-secondary" style="display: none;">Limpiar</button>
+                    <select class="form-select form-select-sm w-auto" id="sort-dropdown" style="max-width: 140px;">
+                        <option value="default">Relevancia</option>
+                        <option value="price-asc">Menor Precio</option>
+                        <option value="price-desc">Mayor Precio</option>
+                    </select>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="container-fluid p-3 p-md-4">
-        <div id="product-grid" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
-            <!-- Los productos se cargarán aquí -->
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Nuestros Productos</h1>
+            <p class="lead text-secondary">Calidad y excelencia para tu bicicleta.</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container pb-5">
+        <div id="product-grid" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            <!-- Products injected here -->
         </div>
     </main>
 
-    <footer class="bg-dark text-white-50 py-4 mt-auto border-top border-secondary">
-        <div class="container text-center">
-            <p class="mb-2 fw-semibold">Lagartobike - Av. Juan de Garay 612 - San Telmo - CABA</p>
-            <div class="d-flex align-items-center justify-content-center flex-wrap gap-4">
-                <div class="d-flex align-items-center gap-2">
+    <!-- Footer -->
+    <footer class="py-4 text-center text-secondary">
+        <div class="container">
+            <p class="mb-2">Lagartobike &copy; 2024</p>
+            <p class="small mb-3">Av. Juan de Garay 612 - San Telmo - CABA</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="#" class="text-decoration-none text-light d-flex align-items-center gap-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.703 0 5.556 0 5.829 0 8s.01 2.444.048 3.297c.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.556 23.99 5.829 24 8 24s2.444-.01 3.297-.048c.852-.04 1.433-.174 1.942-.372.526-.205.972-.478 1.417-.923.445-.444.718-.891.923-1.417.198-.51.333-1.09.372-1.942C23.99 18.444 24 18.171 24 16s-.01-2.444-.048-3.297c-.04-.852-.174-1.433-.372-1.942a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 18.24.42c-.51-.198-1.09-.333-1.942-.372C15.444.01 15.171 0 12 0H8zm0 2.88c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.282.24.705.275 1.486.039.843.047 1.096.047 3.232s-.008 2.389-.047 3.232c-.035.78-.166 1.204-.275 1.486a2.5 2.5 0 0 1-.598.92c-.28.28-.546.453-.92.598-.282.11-.705.24-1.486.275-.843.039-1.096.047-3.232.047s-2.389-.008-3.232-.047c-.78-.035-1.204-.166-1.486-.275a2.5 2.5 0 0 1-.92-.598c-.28-.28-.453-.546-.598-.92-.11-.282-.24-.705-.275-1.486-.039-.843-.047-1.096-.047-3.232s.008-2.389.047-3.232c.035-.78.166-1.204.275-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705.24 1.486.275.843-.039 1.096-.047 3.232-.047zM8 12c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4-4-1.79-4-4zm6.406-4.883a1.144 1.144 0 1 0 0-2.288 1.144 1.144 0 0 0 0 2.288z"/></svg>
-                    <span>lagarto.bike</span>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16"><path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0 0 3.603 0 8.049c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/></svg>
-                    <span>Lagartobike</span>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone" viewBox="0 0 16 16"><path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.6 17.6 0 0 0 4.168 6.608 17.6 17.6 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.68.68 0 0 0-.58-.122l-2.19.547a1.75 1.75 0 0 1-1.657-.459L5.482 8.062a1.75 1.75 0 0 1-.46-1.657l.548-2.19a.68.68 0 0 0-.122-.58zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.612l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.363-1.03-.038-2.137.703-2.877z"/></svg>
-                    <span>Sebastian 11-3431-7611</span>
-                </div>
+                    lagarto.bike
+                </a>
+                <span class="text-secondary">|</span>
+                <span class="text-light">11-3431-7611</span>
             </div>
         </div>
     </footer>
 
-    <a href="https://wa.me/5491134317611" target="_blank" rel="noopener noreferrer" id="whatsapp-fab" title="Chatea con nosotros en WhatsApp">
+    <!-- Cart Modal -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content bg-dark text-light border border-secondary">
+          <div class="modal-header border-secondary">
+            <h5 class="modal-title" id="cartModalLabel">Tu Pedido</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="cart-items-container" class="d-flex flex-column gap-3">
+               <!-- Items injected by JS -->
+               <p class="text-center text-muted py-4">El carrito está vacío.</p>
+            </div>
+          </div>
+          <div class="modal-footer border-secondary d-flex justify-content-between">
+             <div class="text-start">
+                 <div class="small text-secondary">Total Contado</div>
+                 <div class="fs-4 fw-bold text-warning" id="cart-total">$0</div>
+             </div>
+             <button type="button" class="btn btn-success d-flex align-items-center gap-2" id="btn-checkout">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-whatsapp" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/></svg>
+                Enviar Pedido
+             </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <a href="#" target="_blank" rel="noopener noreferrer" id="whatsapp-fab" title="Consultar por WhatsApp">
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
     </a>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const productGrid = document.getElementById('product-grid');
         const navbarBrandContainer = document.getElementById('navbar-brand-container');
         const searchInput = document.getElementById('search-input');
-        
         const categoryDropdown = document.getElementById('category-dropdown');
         const categoryDropdownMenu = document.getElementById('category-dropdown-menu');
-
         const brandDropdownContainer = document.getElementById('brand-dropdown-container');
         const brandDropdown = document.getElementById('brand-dropdown');
         const brandDropdownMenu = document.getElementById('brand-dropdown-menu');
-        
         const measureDropdownContainer = document.getElementById('measure-dropdown-container');
         const measureDropdown = document.getElementById('measure-dropdown');
         const measureDropdownMenu = document.getElementById('measure-dropdown-menu');
-
         const sortDropdown = document.getElementById('sort-dropdown');
         const clearFiltersBtn = document.getElementById('clear-filters-btn');
         
+        // Cart DOM Elements
+        const cartBadge = document.getElementById('cart-badge');
+        const cartItemsContainer = document.getElementById('cart-items-container');
+        const cartTotalEl = document.getElementById('cart-total');
+        const btnCheckout = document.getElementById('btn-checkout');
+
         let allProducts = [];
+        let cart = [];
+        let whatsappNumber = '';
+        
+        // Filter States
+        let filters = {
+            search: '',
+            category: 'all',
+            brand: 'all',
+            measure: 'all',
+            sort: 'default'
+        };
 
         const parsePrice = (priceString) => {
-            if (!priceString || /[a-zA-Z]/.test(String(priceString))) {
-                return Infinity;
-            }
-            const standardizedValue = String(priceString).replace(/./g, '').replace(',', '.');
+            if (!priceString || /[a-zA-Z]/.test(String(priceString))) return Infinity;
+            const cleanString = String(priceString).replace(/[$\s]/g, '');
+            const standardizedValue = cleanString.replace(/\./g, '').replace(',', '.');
             const number = parseFloat(standardizedValue);
             return isNaN(number) ? Infinity : number;
         };
 
         const getProductPrice = (product) => {
             const cashPriceNum = parsePrice(product.cashPrice);
-            if (isFinite(cashPriceNum)) {
-                return cashPriceNum;
-            }
+            if (isFinite(cashPriceNum)) return cashPriceNum;
             return parsePrice(product.listPrice);
         };
 
         const formatCurrency = (value) => {
           if (!value || String(value).trim() === '') return 'Consultar';
           if (/[a-zA-Z]/.test(String(value))) return value;
-          const standardizedValue = String(value).replace(/./g, '').replace(',', '.');
+          const standardizedValue = String(value).replace(/\./g, '').replace(',', '.');
           const number = parseFloat(standardizedValue);
           if (isNaN(number)) return value;
           return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(number);
         };
 
+        // --- Cart Functions ---
+        window.addToCart = (productId) => {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            updateCartUI();
+        };
+
+        window.removeFromCart = (productId) => {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartUI();
+        };
+
+        window.changeQuantity = (productId, delta) => {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    updateCartUI();
+                }
+            }
+        };
+
+        // Updates button for a specific product on the grid
+        const updateCardButton = (productId) => {
+            const container = document.getElementById(`btn-container-${productId}`);
+            if (!container) return;
+
+            const item = cart.find(i => i.id === productId);
+            const quantity = item ? item.quantity : 0;
+
+            if (quantity > 0) {
+                container.innerHTML = `
+                    <div class="d-flex align-items-center justify-content-between bg-dark rounded-pill border border-secondary p-1 w-100 qty-selector">
+                        <button class="btn btn-sm btn-link text-warning text-decoration-none fw-bold px-3" onclick="changeQuantity('${productId}', -1)" style="font-size: 1.2rem;">-</button>
+                        <span class="text-light fw-bold">${quantity}</span>
+                        <button class="btn btn-sm btn-link text-warning text-decoration-none fw-bold px-3" onclick="changeQuantity('${productId}', 1)" style="font-size: 1.2rem;">+</button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                     <button onclick="addToCart('${productId}')" class="btn btn-accent w-100 d-flex align-items-center justify-content-center gap-2 qty-selector">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart-plus" viewBox="0 0 16 16">
+                          <path d="M9 5.5a.5.5 0 0 0-1 0V7H6.5a.5.5 0 0 0 0 1H8v1.5a.5.5 0 0 0 1 0V8h1.5a.5.5 0 0 0 0-1H9V5.5z"/>
+                          <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                        </svg>
+                        Agregar
+                    </button>
+                `;
+            }
+        };
+
+        const updateCartUI = () => {
+            // Update Badge
+            const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+            if (totalItems > 0) {
+                cartBadge.textContent = totalItems;
+                cartBadge.style.display = 'block';
+            } else {
+                cartBadge.style.display = 'none';
+            }
+
+            // Update Modal Content
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="text-center text-muted py-4">El carrito está vacío.</p>';
+                cartTotalEl.textContent = formatCurrency(0);
+                btnCheckout.disabled = true;
+            } else {
+                btnCheckout.disabled = false;
+                cartItemsContainer.innerHTML = cart.map(item => {
+                    const price = getProductPrice(item);
+                    const displayPrice = isFinite(price) ? formatCurrency(price * item.quantity) : 'Consultar';
+                    
+                    return `
+                    <div class="d-flex align-items-center justify-content-between border-bottom border-secondary pb-2">
+                        <div class="d-flex align-items-center gap-3">
+                             <img src="${item.imageUrl}" class="rounded" style="width: 50px; height: 50px; object-fit: contain; background: #fff;">
+                             <div>
+                                 <div class="fw-bold text-light" style="font-size: 0.9rem;">${item.name}</div>
+                                 <div class="small text-warning">${displayPrice}</div>
+                             </div>
+                        </div>
+                        <div class="d-flex align-items-center bg-secondary rounded p-1">
+                            <button class="btn btn-sm btn-link text-white text-decoration-none p-0 px-2" onclick="changeQuantity('${item.id}', -1)">-</button>
+                            <span class="px-2 small fw-bold">${item.quantity}</span>
+                            <button class="btn btn-sm btn-link text-white text-decoration-none p-0 px-2" onclick="changeQuantity('${item.id}', 1)">+</button>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+
+                const total = cart.reduce((acc, item) => {
+                    const p = getProductPrice(item);
+                    return isFinite(p) ? acc + (p * item.quantity) : acc;
+                }, 0);
+                cartTotalEl.textContent = formatCurrency(total);
+            }
+            
+            // Refresh all buttons on grid
+             const productButtons = document.querySelectorAll('[id^="btn-container-"]');
+             productButtons.forEach(container => {
+                 const id = container.id.replace('btn-container-', '');
+                 updateCardButton(id);
+             });
+        };
+
+        btnCheckout.addEventListener('click', () => {
+            if (cart.length === 0) return;
+            
+            let message = "Hola, quiero realizar el siguiente pedido:\n\n";
+            cart.forEach(item => {
+                const p = getProductPrice(item);
+                const pStr = isFinite(p) ? formatCurrency(p) : 'Consultar';
+                message += `*${item.name}* (x${item.quantity}) - ${pStr}\n`;
+            });
+            
+            const total = cart.reduce((acc, item) => {
+                const p = getProductPrice(item);
+                return isFinite(p) ? acc + (p * item.quantity) : acc;
+            }, 0);
+            
+            if (total > 0) {
+                message += `\n*Total Contado: ${formatCurrency(total)}*`;
+            }
+
+            const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        });
+
+
         const createProductCardHTML = (product) => {
           const details = [product.medida, product.origen].filter(Boolean).join(' - ');
-          
+          const priceHtml = product.cashPrice 
+             ? `<div class="price-muted">${formatCurrency(product.listPrice)}</div>
+                 <div class="price-main">${formatCurrency(product.cashPrice)} <span style="font-size:0.6rem; vertical-align: middle; color:#888;">Contado</span></div>`
+             : `<div class="price-main">${formatCurrency(product.listPrice)}</div>`;
+
           return `
             <div class="col">
-                <div class="card h-100 bg-dark text-light border-secondary shadow-sm">
-                    <div class="card-img-top-container bg-white">
-                        <img src="${product.imageUrl}" alt="${product.name}" class="card-img-top" />
+                <div class="product-card h-100">
+                    <div class="card-img-wrapper">
+                        <img src="${product.imageUrl}" alt="${product.name}" class="card-img-top" loading="lazy" />
                     </div>
-                    <div class="card-body d-flex flex-column">
-                        ${product.brand ? `<p class="text-muted text-uppercase small fw-semibold">${product.brand}</p>` : ''}
-                        <p class="small text-warning">${product.category}</p>
-                        <h5 class="card-title fw-bold mt-1">${product.name}</h5>
-                        ${details ? `<p class="small text-muted mt-1">${details}</p>` : ''}
+                    <div class="card-body">
+                        ${product.brand ? `<div class="card-brand">${product.brand}</div>` : ''}
+                        <div class="card-category">${product.category}</div>
+                        <h5 class="card-title">${product.name}</h5>
+                        ${details ? `<div class="card-details mb-2">${details}</div>` : ''}
                         
-                        <div class="mt-auto pt-3">
-                          ${product.cashPrice ? `
-                              <div>
-                                  <p class="text-muted text-decoration-line-through mb-0">${formatCurrency(product.listPrice)}</p>
-                                  <p class="h3 fw-bolder text-warning">${formatCurrency(product.cashPrice)}</p>
-                                  <p class="small text-muted">Precio Contado</p>
-                              </div>
-                          ` : `
-                              <div>
-                                  <p class="h3 fw-bolder text-warning">${formatCurrency(product.listPrice)}</p>
-                                  <p class="small text-muted">Precio de Lista</p>
-                              </div>
-                          `}
+                        <div class="price-container">
+                            ${priceHtml}
                         </div>
                         
-                        <div class="mt-3 flex-grow-1 d-flex align-items-center" style="min-height: 80px;">
-                            ${product.description ? `<p class="card-text small text-justify">${product.description}</p>` : ''}
+                        ${product.description ? `<p class="card-text small text-secondary mt-3" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">${product.description}</p>` : ''}
+                        
+                        <div id="btn-container-${product.id}" class="mt-3">
+                            <!-- Button injected by JS -->
                         </div>
                     </div>
                 </div>
@@ -290,7 +573,7 @@
           container.style.display = 'block';
           dropdownMenu.innerHTML = '';
           const allItem = document.createElement('li');
-          allItem.innerHTML = `<a class="dropdown-item" href="#" data-value="all">Todos los ${label}</a>`;
+          allItem.innerHTML = `<a class="dropdown-item" href="#" data-value="all">Todos</a>`;
           dropdownMenu.appendChild(allItem);
 
           items.forEach(item => {
@@ -302,141 +585,110 @@
         };
 
         const renderCatalog = (data) => {
-            // Logo
             if (data.logoUrl && navbarBrandContainer) {
               const logoImg = document.createElement('img');
               logoImg.src = data.logoUrl;
-              logoImg.alt = 'Logo';
               logoImg.className = 'navbar-logo';
               navbarBrandContainer.prepend(logoImg);
             }
+
+            const whatsappFab = document.getElementById('whatsapp-fab');
+            if (data.whatsappNumber && data.whatsappNumber.trim() !== '') {
+                whatsappNumber = data.whatsappNumber.trim();
+                whatsappFab.href = `https://wa.me/${whatsappNumber}`;
+            } else {
+                whatsappFab.style.display = 'none';
+            }
             
-            // Products
             allProducts = data.products;
             applyFilters();
         };
 
         const applyFilters = () => {
-          const searchTerm = searchInput.value.toLowerCase();
-          const selectedCategory = categoryDropdown.getAttribute('data-value');
-          const selectedBrand = brandDropdown.getAttribute('data-value');
-          const selectedMeasure = measureDropdown.getAttribute('data-value');
-          const selectedSort = sortDropdown.getAttribute('data-value');
-
-          const isFilterActive = searchTerm || selectedCategory !== 'all' || selectedBrand !== 'all' || selectedMeasure !== 'all' || selectedSort !== 'default';
-          clearFiltersBtn.style.display = isFilterActive ? 'block' : 'none';
-
-          // --- Cascading Filter Logic ---
-          
-          const productsFilteredBySearchAndCategory = allProducts.filter(product => {
-              const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
-              const matchesSearch = product.name.toLowerCase().includes(searchTerm);
+          // 1. Filter by Search & Category
+          let filtered = allProducts.filter(p => {
+              const matchesCategory = filters.category === 'all' || p.category === filters.category;
+              const matchesSearch = p.name.toLowerCase().includes(filters.search);
               return matchesCategory && matchesSearch;
           });
           
-          const availableBrands = ['all', ...Array.from(new Set(productsFilteredBySearchAndCategory.map(p => p.brand).filter(Boolean)))];
+          // Update Brand Dropdown based on current filtered set
+          const availableBrands = ['all', ...Array.from(new Set(filtered.map(p => p.brand).filter(Boolean)))];
           updateDropdown(brandDropdownContainer, brandDropdown, brandDropdownMenu, availableBrands, 'Marcas');
           
-          const currentSelectedBrand = brandDropdown.getAttribute('data-value');
-          if (!availableBrands.includes(currentSelectedBrand)) {
-              brandDropdown.setAttribute('data-value', 'all');
+          // Validate current brand selection
+          if (!availableBrands.includes(filters.brand)) {
+              filters.brand = 'all';
               brandDropdown.textContent = 'Marcas';
           }
+          
+          // 2. Filter by Brand
+          filtered = filtered.filter(p => filters.brand === 'all' || p.brand === filters.brand);
 
-          const productsFilteredByBrand = productsFilteredBySearchAndCategory.filter(product => {
-              const currentBrand = brandDropdown.getAttribute('data-value');
-              const matchesBrand = currentBrand === 'all' || product.brand === currentBrand;
-              return matchesBrand;
-          });
-
-          const availableMeasures = ['all', ...Array.from(new Set(productsFilteredByBrand.map(p => p.medida).filter(Boolean)))];
+          // Update Measure Dropdown based on current filtered set
+          const availableMeasures = ['all', ...Array.from(new Set(filtered.map(p => p.medida).filter(Boolean)))];
           updateDropdown(measureDropdownContainer, measureDropdown, measureDropdownMenu, availableMeasures, 'Medidas');
           
-          const currentSelectedMeasure = measureDropdown.getAttribute('data-value');
-          if (!availableMeasures.includes(currentSelectedMeasure)) {
-            measureDropdown.setAttribute('data-value', 'all');
-            measureDropdown.textContent = 'Medida';
-          }
-          
-          const finalProducts = productsFilteredByBrand.filter(product => {
-            const currentMeasure = measureDropdown.getAttribute('data-value');
-            const matchesMeasure = currentMeasure === 'all' || product.medida === currentMeasure;
-            return matchesMeasure;
-          });
-
-          // --- End of Cascading Filter Logic ---
-
-          // Populate main filters if they are empty
-          if(categoryDropdownMenu.children.length === 0) {
-            const allCategories = ['all', ...Array.from(new Set(allProducts.map(p => p.category).filter(Boolean)))];
-            updateDropdown(document.querySelector('.nav-item.dropdown'), categoryDropdown, categoryDropdownMenu, allCategories, 'Familias');
+          // Validate current measure selection
+          if (!availableMeasures.includes(filters.measure)) {
+              filters.measure = 'all';
+              measureDropdown.textContent = 'Medidas';
           }
 
-          const sortedProducts = [...finalProducts];
+          // 3. Filter by Measure
+          filtered = filtered.filter(p => filters.measure === 'all' || p.medida === filters.measure);
           
-          switch (selectedSort) {
-            case 'price-asc':
-              sortedProducts.sort((a, b) => getProductPrice(a) - getProductPrice(b));
-              break;
-            case 'price-desc':
-              sortedProducts.sort((a, b) => getProductPrice(b) - getProductPrice(a));
-              break;
-            default: // 'default' sorting
-              sortedProducts.sort((a, b) => {
-                const categoryComparison = a.category.localeCompare(b.category, 'es', { sensitivity: 'base' });
-                if (categoryComparison !== 0) return categoryComparison;
-                const brandA = a.brand || '';
-                const brandB = b.brand || '';
-                const brandComparison = brandA.localeCompare(brandB, 'es', { sensitivity: 'base' });
-                if (brandComparison !== 0) return brandComparison;
-                const measureA = a.medida || '';
-                const measureB = b.medida || '';
-                return measureA.localeCompare(measureB, 'es', { sensitivity: 'base' });
+          // 4. Sort
+          switch (filters.sort) {
+            case 'price-asc': filtered.sort((a, b) => getProductPrice(a) - getProductPrice(b)); break;
+            case 'price-desc': filtered.sort((a, b) => getProductPrice(b) - getProductPrice(a)); break;
+            default: 
+              filtered.sort((a, b) => {
+                const catComp = a.category.localeCompare(b.category);
+                return catComp !== 0 ? catComp : (a.brand || '').localeCompare(b.brand || '');
               });
-              break;
           }
           
-          productGrid.innerHTML = sortedProducts.length 
-            ? sortedProducts.map(createProductCardHTML).join('')
-            : '<p class="text-center col-12 text-muted">No se encontraron productos con los filtros aplicados.</p>';
+          // Render
+          productGrid.innerHTML = filtered.length 
+            ? filtered.map(createProductCardHTML).join('')
+            : '<div class="col-12 text-center py-5"><h3 class="text-muted">No se encontraron productos</h3></div>';
+          
+          // Initialize buttons state after render
+          updateCartUI();
+            
+          // Show/Hide Clear Button
+          const isFiltering = filters.search || filters.category !== 'all' || filters.brand !== 'all' || filters.measure !== 'all';
+          clearFiltersBtn.style.display = isFiltering ? 'block' : 'none';
         };
         
-        searchInput.addEventListener('input', applyFilters);
-        clearFiltersBtn.addEventListener('click', () => {
-            searchInput.value = '';
-            categoryDropdown.setAttribute('data-value', 'all');
-            categoryDropdown.textContent = 'Familia';
-            brandDropdown.setAttribute('data-value', 'all');
-            brandDropdown.textContent = 'Marcas';
-            measureDropdown.setAttribute('data-value', 'all');
-            measureDropdown.textContent = 'Medida';
-            sortDropdown.setAttribute('data-value', 'default');
-            sortDropdown.textContent = 'Ordenar por';
-            applyFilters();
-        });
-
-        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        // Listeners
+        searchInput.addEventListener('input', (e) => { filters.search = e.target.value.toLowerCase(); applyFilters(); });
+        sortDropdown.addEventListener('change', (e) => { filters.sort = e.target.value; applyFilters(); });
+        
+        const setupDropdown = (menu, toggleBtn, key) => {
             menu.addEventListener('click', (e) => {
-                const target = e.target;
-                if (target.matches('.dropdown-item')) {
+                if (e.target.matches('.dropdown-item')) {
                     e.preventDefault();
-                    const value = target.getAttribute('data-value');
-                    const dropdownToggle = target.closest('.dropdown').querySelector('.dropdown-toggle');
-                    dropdownToggle.setAttribute('data-value', value);
-                    
-                    if (dropdownToggle.id === 'sort-dropdown') {
-                        dropdownToggle.textContent = target.textContent;
-                    } else { // It's a filter dropdown
-                        if (value === 'all') {
-                            const baseText = dropdownToggle.id.includes('category') ? 'Familia' : (dropdownToggle.id.includes('brand') ? 'Marcas' : 'Medida');
-                            dropdownToggle.textContent = baseText;
-                        } else {
-                            dropdownToggle.textContent = target.textContent;
-                        }
-                    }
+                    filters[key] = e.target.getAttribute('data-value');
+                    toggleBtn.textContent = e.target.textContent;
                     applyFilters();
                 }
             });
+        };
+        
+        setupDropdown(categoryDropdownMenu, categoryDropdown, 'category');
+        setupDropdown(brandDropdownMenu, brandDropdown, 'brand');
+        setupDropdown(measureDropdownMenu, measureDropdown, 'measure');
+
+        clearFiltersBtn.addEventListener('click', () => {
+            filters = { search: '', category: 'all', brand: 'all', measure: 'all', sort: 'default' };
+            searchInput.value = '';
+            categoryDropdown.textContent = 'Categorías';
+            brandDropdown.textContent = 'Marcas';
+            measureDropdown.textContent = 'Medidas';
+            sortDropdown.value = 'default';
+            applyFilters();
         });
 
         
@@ -448,6 +700,12 @@
                 document.getElementById('product-grid').innerHTML = '<p class="text-center col-12 text-danger">No se pudo cargar el catálogo.</p>';
             });
       
+        
+        // Post-load Category Population
+        if (allProducts.length) {
+             const allCats = ['all', ...Array.from(new Set(allProducts.map(p => p.category).filter(Boolean)))];
+             updateDropdown(document.querySelector('.nav-item.dropdown'), categoryDropdown, categoryDropdownMenu, allCats, 'Categorías');
+        }
       });
     </script>
 </body>
