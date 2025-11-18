@@ -52,21 +52,20 @@
         letter-spacing: -0.5px;
       }
 
-      /* Hero Section */
-      .hero-section {
-        background: linear-gradient(45deg, #000000, #1C1C1C);
-        padding: 4rem 1rem;
-        text-align: center;
-        border-bottom: 1px solid #333;
-        margin-bottom: 2rem;
+      /* Carousel Styles */
+      .carousel-item {
+        height: 500px;
       }
-      .hero-title {
-        font-size: 3rem;
-        font-weight: 800;
-        background: linear-gradient(to right, #FFD300, #FFEA80);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 1rem;
+      .carousel-item img {
+        object-fit: cover;
+        height: 100%;
+        filter: brightness(0.6);
+      }
+      .carousel-caption {
+        bottom: 20%;
+      }
+      .text-shadow {
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
       }
       
       /* Product Card Styles */
@@ -212,6 +211,7 @@
       }
 
       @media (max-width: 768px) {
+        .carousel-item { height: 250px; }
         .hero-title { font-size: 2rem; }
         .product-card:hover { transform: none; }
       }
@@ -271,12 +271,44 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <div class="hero-section">
-        <div class="container">
-            <h1 class="hero-title">Nuestros Productos</h1>
-            <p class="lead text-secondary">Calidad y excelencia para tu bicicleta.</p>
+    <!-- Carousel Hero -->
+    <div id="heroCarousel" class="carousel slide mb-5 shadow-lg" data-bs-ride="carousel">
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+      </div>
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?q=80&w=1600&auto=format&fit=crop" class="d-block w-100" alt="Bicicleta de Ruta">
+          <div class="carousel-caption">
+            <h2 class="display-4 fw-bold text-warning text-shadow">Bienvenidos a Lagartobike</h2>
+            <p class="lead text-white text-shadow fw-semibold">Importador de Productos Premium para ciclismo</p>
+          </div>
         </div>
+        <div class="carousel-item">
+          <img src="https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?q=80&w=1600&auto=format&fit=crop" class="d-block w-100" alt="Accesorios">
+          <div class="carousel-caption">
+            <h2 class="display-4 fw-bold text-warning text-shadow">Componentes Pro</h2>
+            <p class="lead text-white text-shadow fw-semibold">Mejora tu rendimiento con las mejores marcas.</p>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="https://images.unsplash.com/photo-1559348349-86f1f65817fe?q=80&w=1600&auto=format&fit=crop" class="d-block w-100" alt="Taller">
+          <div class="carousel-caption">
+            <h2 class="display-4 fw-bold text-warning text-shadow">Todo para tu Bici</h2>
+            <p class="lead text-white text-shadow fw-semibold">Encuentra lo que necesitas en un solo lugar.</p>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Siguiente</span>
+      </button>
     </div>
 
     <!-- Main Content -->
@@ -297,7 +329,7 @@
                     lagarto.bike
                 </a>
                 <span class="text-secondary">|</span>
-                <span class="text-light">11-3431-7611</span>
+                <span class="text-light" id="footer-phone">11-3431-7611</span>
             </div>
         </div>
     </footer>
@@ -612,6 +644,10 @@
             if (data.whatsappNumber && data.whatsappNumber.trim() !== '') {
                 whatsappNumber = data.whatsappNumber.trim();
                 whatsappFab.href = `https://wa.me/${whatsappNumber}`;
+                
+                // Update footer phone
+                const footerPhone = document.getElementById('footer-phone');
+                if (footerPhone) footerPhone.textContent = whatsappNumber;
             } else {
                 whatsappFab.style.display = 'none';
             }

@@ -28,7 +28,7 @@ Descomprime el archivo `catalogo-web.zip` que acabas de descargar. Encontrarás 
 - En tu repositorio, ve a la pestaña **"Settings"**.
 - En el menú de la izquierda, haz clic en **"Pages"**.
 - En la sección "Build and deployment", bajo "Source", selecciona **"Deploy from a branch"**.
-- Asegúrate de que la rama seleccionada sea `main` y la carpeta sea `/ (root)`.
+- Asegúrate de que sea `main` y la carpeta sea `/ (root)`.
 - Haz clic en **"Save"**.
 
 ### 5. ¡Listo!
