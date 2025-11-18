@@ -371,9 +371,20 @@
         };
 
         const parsePrice = (priceString) => {
-            if (!priceString || /[a-zA-Z]/.test(String(priceString))) return Infinity;
-            const cleanString = String(priceString).replace(/[$\s]/g, '');
-            const standardizedValue = cleanString.replace(/\./g, '').replace(',', '.');
+            if (!priceString) return Infinity;
+            // Safe digit check using double backslash for template string
+            if (!/\d/.test(String(priceString))) return Infinity;
+            
+            // Remove everything except digits, commas, dots, and minus
+            // This makes it robust against text like "$ 1200 (Efvo)"
+            const cleanString = String(priceString).replace(/[^0-9,.-]/g, '');
+            
+            // Remove thousands separator (dots) using split/join to avoid regex escaping issues
+            const noDots = cleanString.split('.').join('');
+            
+            // Replace decimal comma with dot
+            const standardizedValue = noDots.replace(',', '.');
+            
             const number = parseFloat(standardizedValue);
             return isNaN(number) ? Infinity : number;
         };
@@ -386,9 +397,14 @@
 
         const formatCurrency = (value) => {
           if (!value || String(value).trim() === '') return 'Consultar';
-          if (/[a-zA-Z]/.test(String(value))) return value;
-          const standardizedValue = String(value).replace(/\./g, '').replace(',', '.');
+          // If it has letters but is not a clean price string, return as is
+          if (/[a-zA-Z]/.test(String(value)) && !/\d/.test(String(value))) return value;
+          
+          // Try to parse it as a number
+          const cleanString = String(value).replace(/[^0-9,.-]/g, '');
+          const standardizedValue = cleanString.split('.').join('').replace(',', '.');
           const number = parseFloat(standardizedValue);
+          
           if (isNaN(number)) return value;
           return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(number);
         };
