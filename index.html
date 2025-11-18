@@ -89,6 +89,10 @@
         .navbar-nav {
           padding-top: 1rem;
         }
+        .navbar .d-flex {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
       }
       
       @media (max-width: 767.98px) {
@@ -147,6 +151,14 @@
                             <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
                         </svg>
                     </button>
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white-50" href="#" id="sort-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-value="default">Ordenar por</a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sort-dropdown" id="sort-dropdown-menu">
+                            <li><a class="dropdown-item" href="#" data-value="default">Defecto</a></li>
+                            <li><a class="dropdown-item" href="#" data-value="price-asc">Precio (Menor)</a></li>
+                            <li><a class="dropdown-item" href="#" data-value="price-desc">Precio (Mayor)</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -200,14 +212,32 @@
         const measureDropdown = document.getElementById('measure-dropdown');
         const measureDropdownMenu = document.getElementById('measure-dropdown-menu');
 
+        const sortDropdown = document.getElementById('sort-dropdown');
         const clearFiltersBtn = document.getElementById('clear-filters-btn');
         
         let allProducts = [];
 
+        const parsePrice = (priceString) => {
+            if (!priceString || /[a-zA-Z]/.test(String(priceString))) {
+                return Infinity;
+            }
+            const standardizedValue = String(priceString).replace(/./g, '').replace(',', '.');
+            const number = parseFloat(standardizedValue);
+            return isNaN(number) ? Infinity : number;
+        };
+
+        const getProductPrice = (product) => {
+            const cashPriceNum = parsePrice(product.cashPrice);
+            if (isFinite(cashPriceNum)) {
+                return cashPriceNum;
+            }
+            return parsePrice(product.listPrice);
+        };
+
         const formatCurrency = (value) => {
           if (!value || String(value).trim() === '') return 'Consultar';
           if (/[a-zA-Z]/.test(String(value))) return value;
-          const standardizedValue = String(value).replace(/\./g, '').replace(',', '.');
+          const standardizedValue = String(value).replace(/./g, '').replace(',', '.');
           const number = parseFloat(standardizedValue);
           if (isNaN(number)) return value;
           return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(number);
@@ -291,8 +321,9 @@
           const selectedCategory = categoryDropdown.getAttribute('data-value');
           const selectedBrand = brandDropdown.getAttribute('data-value');
           const selectedMeasure = measureDropdown.getAttribute('data-value');
+          const selectedSort = sortDropdown.getAttribute('data-value');
 
-          const isFilterActive = searchTerm || selectedCategory !== 'all' || selectedBrand !== 'all' || selectedMeasure !== 'all';
+          const isFilterActive = searchTerm || selectedCategory !== 'all' || selectedBrand !== 'all' || selectedMeasure !== 'all' || selectedSort !== 'default';
           clearFiltersBtn.style.display = isFilterActive ? 'block' : 'none';
 
           // --- Cascading Filter Logic ---
@@ -341,20 +372,32 @@
             updateDropdown(document.querySelector('.nav-item.dropdown'), categoryDropdown, categoryDropdownMenu, allCategories, 'Familias');
           }
 
-          finalProducts.sort((a, b) => {
-            const categoryComparison = a.category.localeCompare(b.category, 'es', { sensitivity: 'base' });
-            if (categoryComparison !== 0) return categoryComparison;
-            const brandA = a.brand || '';
-            const brandB = b.brand || '';
-            const brandComparison = brandA.localeCompare(brandB, 'es', { sensitivity: 'base' });
-            if (brandComparison !== 0) return brandComparison;
-            const measureA = a.medida || '';
-            const measureB = b.medida || '';
-            return measureA.localeCompare(measureB, 'es', { sensitivity: 'base' });
-          });
+          const sortedProducts = [...finalProducts];
           
-          productGrid.innerHTML = finalProducts.length 
-            ? finalProducts.map(createProductCardHTML).join('')
+          switch (selectedSort) {
+            case 'price-asc':
+              sortedProducts.sort((a, b) => getProductPrice(a) - getProductPrice(b));
+              break;
+            case 'price-desc':
+              sortedProducts.sort((a, b) => getProductPrice(b) - getProductPrice(a));
+              break;
+            default: // 'default' sorting
+              sortedProducts.sort((a, b) => {
+                const categoryComparison = a.category.localeCompare(b.category, 'es', { sensitivity: 'base' });
+                if (categoryComparison !== 0) return categoryComparison;
+                const brandA = a.brand || '';
+                const brandB = b.brand || '';
+                const brandComparison = brandA.localeCompare(brandB, 'es', { sensitivity: 'base' });
+                if (brandComparison !== 0) return brandComparison;
+                const measureA = a.medida || '';
+                const measureB = b.medida || '';
+                return measureA.localeCompare(measureB, 'es', { sensitivity: 'base' });
+              });
+              break;
+          }
+          
+          productGrid.innerHTML = sortedProducts.length 
+            ? sortedProducts.map(createProductCardHTML).join('')
             : '<p class="text-center col-12 text-muted">No se encontraron productos con los filtros aplicados.</p>';
         };
         
@@ -367,6 +410,8 @@
             brandDropdown.textContent = 'Marcas';
             measureDropdown.setAttribute('data-value', 'all');
             measureDropdown.textContent = 'Medida';
+            sortDropdown.setAttribute('data-value', 'default');
+            sortDropdown.textContent = 'Ordenar por';
             applyFilters();
         });
 
@@ -378,10 +423,16 @@
                     const value = target.getAttribute('data-value');
                     const dropdownToggle = target.closest('.dropdown').querySelector('.dropdown-toggle');
                     dropdownToggle.setAttribute('data-value', value);
-                    if (value === 'all') {
-                        dropdownToggle.textContent = dropdownToggle.id.includes('category') ? 'Familia' : (dropdownToggle.id.includes('brand') ? 'Marcas' : 'Medida');
-                    } else {
+                    
+                    if (dropdownToggle.id === 'sort-dropdown') {
                         dropdownToggle.textContent = target.textContent;
+                    } else { // It's a filter dropdown
+                        if (value === 'all') {
+                            const baseText = dropdownToggle.id.includes('category') ? 'Familia' : (dropdownToggle.id.includes('brand') ? 'Marcas' : 'Medida');
+                            dropdownToggle.textContent = baseText;
+                        } else {
+                            dropdownToggle.textContent = target.textContent;
+                        }
                     }
                     applyFilters();
                 }
