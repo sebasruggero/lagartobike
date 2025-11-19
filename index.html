@@ -212,6 +212,26 @@
 
       @media (max-width: 768px) {
         .carousel-item { height: 250px; }
+        /* Add spacing from navbar */
+        #heroCarousel { margin-top: 20px; }
+        
+        /* Optimize caption for mobile */
+        .carousel-caption {
+            bottom: 1rem; 
+            left: 5%;
+            right: 5%;
+            padding-bottom: 0;
+        }
+        .carousel-caption h2 { 
+            font-size: 1.2rem; /* Smaller font */
+            margin-bottom: 0.25rem;
+        }
+        .carousel-caption p { 
+            font-size: 0.85rem; /* Smaller font */
+            line-height: 1.2;
+            margin-bottom: 0;
+        }
+        
         .hero-title { font-size: 2rem; }
         .product-card:hover { transform: none; }
       }
@@ -223,7 +243,6 @@
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="#" id="navbar-brand-container">
                 <!-- Logo injected via JS -->
-                <span>CATÁLOGO</span>
             </a>
              
             <div class="d-flex gap-3 align-items-center order-lg-3">
@@ -243,7 +262,7 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center gap-2">
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown" id="category-dropdown-container">
                         <a class="nav-link dropdown-toggle" href="#" id="category-dropdown" role="button" data-bs-toggle="dropdown">Categorías</a>
                         <ul class="dropdown-menu dropdown-menu-dark" id="category-dropdown-menu"></ul>
                     </li>
@@ -653,6 +672,15 @@
             }
             
             allProducts = data.products;
+            
+            // Populate Categories Dropdown
+            const categoryDropdownContainer = document.getElementById('category-dropdown-container');
+            if (categoryDropdownContainer && allProducts.length) {
+                 // Map 'Familia' (which is 'category' in product object) to dropdown
+                 const allCats = ['all', ...Array.from(new Set(allProducts.map(p => p.category).filter(c => c && c.trim() !== '')))];
+                 updateDropdown(categoryDropdownContainer, categoryDropdown, categoryDropdownMenu, allCats, 'Categorías');
+            }
+
             applyFilters();
         };
 
@@ -753,11 +781,6 @@
             });
       
         
-        // Post-load Category Population
-        if (allProducts.length) {
-             const allCats = ['all', ...Array.from(new Set(allProducts.map(p => p.category).filter(Boolean)))];
-             updateDropdown(document.querySelector('.nav-item.dropdown'), categoryDropdown, categoryDropdownMenu, allCats, 'Categorías');
-        }
       });
     </script>
 </body>
